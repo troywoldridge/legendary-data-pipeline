@@ -2,10 +2,7 @@
 import "dotenv/config";
 import { request } from "undici";
 
-const ORIGIN = (process.env.REVALUE_ORIGIN || "http://127.0.0.1:3001").replace(
-  /\/$/,
-  "",
-);
+const ORIGIN = (process.env.REVALUE_ORIGIN || "http://127.0.0.1:3001").replace(/\/$/, "");
 
 /**
  * Strip ANSI escape sequences + any non-printable / non-ASCII characters.
@@ -31,9 +28,6 @@ const ADMIN_API_TOKEN = sanitizeHeaderValue(RAW_TOKEN);
 
 if (!ADMIN_API_TOKEN) {
   console.error("[cronRevalueAll] Missing/empty ADMIN_API_TOKEN after sanitizing");
-  console.error(
-    `[cronRevalueAll] rawLen=${String(RAW_TOKEN).length} sanitizedLen=${ADMIN_API_TOKEN.length}`,
-  );
   process.exit(1);
 }
 
@@ -41,7 +35,6 @@ async function main() {
   const url = `${ORIGIN}/api/dev/collection/revalue`;
 
   console.log(`[cronRevalueAll] origin: ${ORIGIN}`);
-  console.log(`[cronRevalueAll] token lens: raw=${String(RAW_TOKEN).length} sanitized=${ADMIN_API_TOKEN.length}`);
   console.log(`[cronRevalueAll] calling ${url}`);
 
   const res = await request(url, {
@@ -54,6 +47,8 @@ async function main() {
     bodyTimeout: 10 * 60 * 1000,
     maxRedirections: 0,
   });
+}
+
 
   const text = await res.body.text();
 
